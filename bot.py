@@ -9,12 +9,11 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 
 client = discord.Client()
 
+fnames = [fname for fname in os.listdir('.') if fname.endswith('.txt')]
+
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
-
-    for guild in client.guilds:
-        print(guild)
 
 @client.event
 async def on_message(message):
@@ -23,21 +22,31 @@ async def on_message(message):
 
     content = str(message.content.lower()).strip()
 
+    if content == '=version' or content == '=about':
+        await message.channel.send('```\nVersion  : 0.0.2\nCodename : LOIS\n```')
+        return
+
+    if content == '=usage' or content == '=help':
+        await message.channel.send('```\nSeason <season> <episode>:<line>\nOR\nSeason <season> <episode>:<begin>-<end>\n```')
+        return
+
     if content == '=random':
-        infile = None
         fnames = [fname for fname in os.listdir('.') if fname.endswith('.txt')]
-        infile = open(fnames[randint(0, len(fnames) - 1)], 'r')
+        infilename = fnames[randint(0, len(fnames) - 1)]
+        season, episode = infilename[:-4].split('_')
+        infile = open(infilename, 'r')
         verses = infile.readlines()
         lo = randint(0, len(verses) - 1)
         hi = randint(lo, lo + (len(verses) if len(verses) - lo < 21 else 18))
-        msg = '```\n' + ''.join(verses[lo : hi]) + '```'
+        msg = f'```\nSEASON {season} EPISODE {episode} LINES {lo}-{hi - 1}\n{"".join(verses[lo : hi])}\n```'
         await message.channel.send(msg)
         infile.close()
+        return
 
 
     infile = None
     try:
-        re_obj = re.findall('season ([0-9][0-9]?) ([0-9])+:(.+)', content)[0]
+        re_obj = re.findall('season ([0-9][0-9]?) ([0-9][0-9]?)+:(.+)', content)[0]
         season = int(re_obj[0])
         episode = int(re_obj[1])
         verse = re_obj[2] if '-' in re_obj[2] else int(re_obj[2])
