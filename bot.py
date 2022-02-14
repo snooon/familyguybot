@@ -23,7 +23,7 @@ async def on_message(message):
     content = str(message.content.lower()).strip()
 
     if content == '=version' or content == '=about':
-        await message.channel.send('```\nVersion  : 0.0.2\nCodename : LOIS\n```')
+        await message.channel.send('```\nVersion  : 0.0.2-1\nCodename : LOIS\n```')
         return
 
     if content == '=usage' or content == '=help':
@@ -38,7 +38,7 @@ async def on_message(message):
         verses = infile.readlines()
         lo = randint(0, len(verses) - 1)
         hi = randint(lo, lo + (len(verses) if len(verses) - lo < 21 else 18))
-        msg = f'```\nSEASON {season} EPISODE {episode} LINES {lo}-{hi - 1}\n{"".join(verses[lo : hi])}\n```'
+        msg = f'```\nSEASON {season} EPISODE {episode} LINES {lo + 1}-{hi}\n{"".join(verses[lo : hi])}\n```'
         await message.channel.send(msg)
         infile.close()
         return
