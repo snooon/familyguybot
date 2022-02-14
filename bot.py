@@ -1,5 +1,3 @@
-from cmath import exp, inf
-from dis import disco
 import os
 import discord
 import re
